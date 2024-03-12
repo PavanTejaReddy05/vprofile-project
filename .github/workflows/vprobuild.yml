@@ -1,17 +1,29 @@
-name: Build Workflow
-on: workflow_dispatch
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+
 jobs:
-  first-job:
+  build:
     runs-on: ubuntu-latest
+
     steps:
-     - name: Fetch Source coce
-       uses: actions/checkout@v4
-     - name: Build artifacts
-       run: | 
-          mvn install
-          mv target/vprofile-v2.war .
-          rm -rf target
-          mkdir target
-          mv vprofile-v2.war target/
-          ls -l target/
-          
+    - name: Checkout Repository
+      uses: actions/checkout@v2
+
+    - name: Set up Java
+      uses: actions/setup-java@v2
+      with:
+        distribution: 'adopt'
+        java-version: '11'
+
+    - name: Build with Maven
+      run: mvn clean install
+
+    - name: Run Unit Tests
+      run: mvn test
+
+    - name: Run Hello World Application
+      run: java -jar target/your-hello-world-app.jar
